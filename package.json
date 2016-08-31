@@ -1,0 +1,26 @@
+{
+  "name": "webrtc",
+  "version": "0.0.1",
+  "description": "Webrtc test for sensemakers",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "webrtc",
+    "clubsense",
+    "thuis.nl"
+  ],
+  "author": "Hotze Visser",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.8",
+  },
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-ruby-sass": "^2.1.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

@@ -1,0 +1,9 @@
+## Project ##
+dist/
+private.json
+
+### Node/NPM ###
+npm-debug.log*
+node_modules/
+.npm/
+
