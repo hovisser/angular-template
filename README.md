@@ -2,9 +2,7 @@
 Template for angular development with gulp setup
 
 # Prerequist
-> **Note:**
-
-> - **Nodejs** should be installed before you can continue
+**Nodejs** should be installed before you can continue
 
 First install gulp: 
 
@@ -18,23 +16,25 @@ npm install
 ```
 
 # Build commands
-In the project folder just type:
-```
-gulp 
-```
+Goto the project root folder to execute commands
+
+Builds the project:
 ```
 gulp build
 ```
-
-#Clean project
+Also builds the project:
+```
+gulp build
+```
+Cleans the project
 ```
 gulp clean
 ```
-
-# Clean build of project 
+Cleans the project and build is 
 ```
 gulp build-clean
 ```
+> **NOTE:**
 
-Use: --dev flag to start http-server for development
+> Use: --dev flag to start http-server for development
  
