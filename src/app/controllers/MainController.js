@@ -1,5 +1,5 @@
 module.exports = function($scope) {
-	$scope.message = 'Two birds killed with one stone!'
+	$scope.message = 'The template works';
 
   $scope.getMessage = function(){
      return $scope.message;
