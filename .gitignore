@@ -6,4 +6,5 @@ private.json
 npm-debug.log*
 node_modules/
 .npm/
+.sass-cache/
 
