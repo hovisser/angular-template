@@ -14,7 +14,7 @@
   "author": "Hotze Visser",
   "license": "ISC",
   "dependencies": {
-    "angular": "^1.5.8",
+    "angular": "^1.5.8"
   },
   "devDependencies": {
     "browserify": "^13.1.0",
