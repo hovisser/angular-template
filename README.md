@@ -14,9 +14,15 @@ npm install
 
 # Build commands
 In the project folder just type 
- - gulp (Build project)
- - gulp build  (Build project)
- - gulp build-clean (clean destination folder and build project)
- 
+# Build project
+ - gulp 
+ - gulp build
+
+#Clean project
+ - gulp clean
+
+# Clean build of project 
+ - gulp build-clean 
+
 Use: --dev flag to start http-server for development
  
