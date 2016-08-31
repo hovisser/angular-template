@@ -18,12 +18,15 @@
   },
   "devDependencies": {
     "browserify": "^13.1.0",
+    "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
+    "gulp-inject": "^4.1.0",
     "gulp-minify": "0.0.14",
     "gulp-rename": "^1.2.2",
     "gulp-ruby-sass": "^2.1.0",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "yargs": "^5.0.0"
   }
 }
