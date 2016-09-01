@@ -1,0 +1,6 @@
+$someColor: #000;
+h1 {
+  color: $someColor;
+}
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
