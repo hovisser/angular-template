@@ -6,6 +6,13 @@ angular.module('routing').config(['$routeProvider', '$locationProvider', functio
     $locationProvider.html5Mode(true);
 
     $routeProvider.when("/", {
+          title: "Home",
           templateUrl : "home/home.view.html"
       });
+}]);
+
+angular.module('routing').run(['$rootScope', '$route', function($rootScope, $route) {
+    $rootScope.$on('$routeChangeSuccess', function() {
+        document.title = $route.current.title;
+    });
 }]);
