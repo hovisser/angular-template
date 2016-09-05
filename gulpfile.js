@@ -9,6 +9,7 @@ var connect = require('gulp-connect');
 var inject  = require("gulp-inject");
 var rename = require("gulp-rename");
 var minify = require('gulp-minify');
+var size = require('gulp-size');
 var templateCache = require('gulp-angular-templatecache');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
@@ -26,31 +27,36 @@ var args = require('yargs').argv;
 *
 **/
 //configuration destination paths
-const destRoot= 'dist';
-const destJSRoot = 'dist/js';
-const destCSSRoot = 'dist/css';
+const DEST_ROOT= 'dist';
+const DEST_JS_ROOT = 'dist/js';
+const DEST_CSS_ROOT = 'dist/css';
 //filenames
-const destIndexFileName = 'index.html';
-const destMainJSFileName = "main.js";
+const DEST_INDEX_FILENAME = 'index.html';
+const DEST_MAIN_JS_FILENAME = "main.js";
 //suffixes
-const destJSSuffixDev = "-debug.js"
-const destJSSuffixMin = "-min.js";
+const DEST_JS_SUFFIX_DEV = "-debug.js"
+const DEST_JS_SUFFIX_MIN = "-min.js";
 //destination wildcards
-const destCSSRootWildCard = destCSSRoot + '/*.css';
-const destJSRootWildCard = destJSRoot + '/*.js';
+const DEST_CSS_ROOT_WILDCARD = DEST_CSS_ROOT + '/*.css';
+const DEST_JS_ROOT_WILDCARD = DEST_JS_ROOT + '/*.js';
 
 //configuration source paths
-const srcRoot = 'src';
-const srcJSRoot = 'src/app/**';
-const srcTemplateRoot = 'src/app/components/**/*.view.html';
-const srcSassRoot = 'src/assets/css/**';
-const srcIndexTplFile = 'src/index.tpl.html';
-const srcJSModuleFile = 'src/app/app.module.js';
+const SRC_ROOT = 'src';
+const SRC_JS_ROOT = 'src/app/**';
+const SRC_TPL_ROOT = 'src/app/components/**/*.view.html';
+const SRC_SASS_ROOT = 'src/assets/css/**';
+const SRC_INDEX_TPL_FILE = 'src/index.tpl.html';
+const SRC_JS_MODULE_FILE = 'src/app/app.module.js';
 //source wildecards
-const srcSassRootWildCard = srcSassRoot + '/*.scss';
-const srcJSRootWildCard = srcJSRoot + '/*.js';
+const SRC_SASS_ROOT_WILDCARD = SRC_SASS_ROOT + '/*.scss';
+const SRC_JS_ROOT_WILDCARD = SRC_JS_ROOT + '/*.js';
+//dev server http port
+const DEV_HTTP_PORT=9090;
 
-const devHttpPort=9090;
+const SIZE_OPTS = {
+    showFiles: true,
+    gzip: true
+};
 
 /**
 *  Begin region gulp tasks
@@ -58,14 +64,14 @@ const devHttpPort=9090;
 //Clean the destination folder
 gulp.task('clean', function(){
     return clean([
-        destRoot
+        DEST_ROOT
     ]);
 });
 
 //Clean the javascript destination folder
 gulp.task('cleanjs', function(){
     return clean([
-       destJSRoot
+       DEST_JS_ROOT
     ]);
 });
 
@@ -73,65 +79,68 @@ gulp.task('cleanjs', function(){
 //Make a http server for development
 gulp.task('connect', function () {
 	connect.server({
-		root: destRoot,
-		port: devHttpPort
+		root: DEST_ROOT,
+		port: DEV_HTTP_PORT
 	});
 });
 
 //Bundle javascript files, minify the files and save them to the destination folder
 gulp.task('browserify', ['cleanjs'], function() {
 	// Grabs the app.js file
-    var gen = browserify(srcJSModuleFile)
+    var gen = browserify(SRC_JS_MODULE_FILE)
         .bundle()
-        .pipe(source(destMainJSFileName))
-				.pipe(buffer());
+        .pipe(source(DEST_MAIN_JS_FILENAME))
+				.pipe(buffer())
+        .pipe(size(SIZE_OPTS)); //size before
 
       //if not development minify files
       if(args.dev !== true){
   				return gen.pipe(minify({
   					ext:{
-              //src: destJSSuffixDev,
-              min: destJSSuffixMin
+              //src: DEST_JS_SUFFIX_DEV,
+              min: DEST_JS_SUFFIX_MIN
           	},
   					noSource: true
   				}))
-          .pipe(gulp.dest( destJSRoot ));
+          .pipe(size(SIZE_OPTS)) //size after
+          .pipe(gulp.dest( DEST_JS_ROOT ));
       } else {
-          return gen.pipe(gulp.dest( destJSRoot ));
+          return gen.pipe(size(SIZE_OPTS)) //size after
+            .pipe(gulp.dest( DEST_JS_ROOT ));
       }
 });
 
 //Load the templates and put them in the template Cache
 gulp.task('templates', ['browserify'], function(){
-    return gulp.src( srcTemplateRoot )
+    return gulp.src( SRC_TPL_ROOT )
         .pipe(templateCache( { module: 'app' }))
-        .pipe(gulp.dest( destJSRoot ));
+        .pipe(gulp.dest( DEST_JS_ROOT ));
 });
 
 //grap the index template rename and copy the file to the destination folder (wait for browserify and sass to complete)
 gulp.task('index', ['browserify', 'templates', 'sass'], function(){
 		// It's not necessary to read the files (will speed up things), we're only after their paths:
-		var sources = gulp.src([destJSRootWildCard, destCSSRootWildCard], {read: false});
+		var sources = gulp.src([DEST_JS_ROOT_WILDCARD, DEST_CSS_ROOT_WILDCARD], {read: false});
 
-    return gulp.src(srcIndexTplFile)
-        .pipe(rename(destIndexFileName))
-				.pipe(inject(sources, { ignorePath: destRoot }))
-        .pipe(gulp.dest(destRoot));
+    return gulp.src(SRC_INDEX_TPL_FILE)
+        .pipe(rename(DEST_INDEX_FILENAME))
+				.pipe(inject(sources, { ignorePath: DEST_ROOT }))
+        .pipe(gulp.dest(DEST_ROOT));
 });
 
 //grab the sass file and convert to css copy the file to the css folder
 gulp.task('sass', function() {
-	return gulp.src(srcSassRootWildCard)
+	return gulp.src(SRC_SASS_ROOT_WILDCARD)
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest(destCSSRoot));
+    .pipe(gulp.dest(DEST_CSS_ROOT));
 });
 
 //Check if files are changed and start task if nessecary
 gulp.task('watch', function() {
-	gulp.watch( srcJSRootWildCard, ['browserify', 'templates']);
-	gulp.watch( srcSassRootWildCard, ['sass']);
-	gulp.watch( srcIndexTplFile, ['index'] );
-  gulp.watch( srcTemplateRoot, ['templates']);
+	gulp.watch( SRC_JS_ROOT_WILDCARD, ['browserify', 'templates']);
+	gulp.watch( SRC_SASS_ROOT_WILDCARD, ['sass']);
+	gulp.watch( SRC_INDEX_TPL_FILE, ['index'] );
+  gulp.watch( SRC_TPL_ROOT, ['templates']);
 });
 
 //Main gulp commands
